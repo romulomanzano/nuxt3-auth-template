@@ -253,15 +253,15 @@ export default {
     exitResetPasswordMode() {
       this.resetPasswordMode = false;
       this.tab = 0;
-      clearForm();
+      this.clearForm();
     },
     setResetPasswordMode() {
       this.resetPasswordMode = true;
       this.tab = 0;
-      clearForm();
+      this.clearForm();
     },
     clearForm() {
-      v$.$reset();
+      this.v$.$reset();
       this.email = null;
       this.password = null;
       this.passwordConfirmation = null;
@@ -278,16 +278,15 @@ export default {
             text: error.response.data.message,
             group: "auth",
           });
-          clearForm();
+          this.clearForm();
         }
       }
     },
     async submitRegister() {
       if (this.isValidForm) {
-        $axios
-          .post("/users/register", {
-            email: email,
-            password: password,
+        $fetch("/users/register", {
+            email: this.email,
+            password: this.password,
           })
           .then((res) => {
             $notify({
@@ -295,7 +294,7 @@ export default {
               text: res.data.message,
               group: "auth",
             });
-            submitLogin();
+            this.submitLogin();
           })
           .catch((error) => {
             $notify({
@@ -303,14 +302,13 @@ export default {
               text: error.response.data.message,
               group: "auth",
             });
-            clearForm();
+            this.clearForm();
           });
       }
     },
     submitResetPassword() {
-      $axios
-        .post("/users/forgot_password", {
-          email: email,
+      $fetch("/users/forgot_password", {
+          email: this.email,
         })
         .then((res) => {
           $notify({
@@ -318,7 +316,7 @@ export default {
             text: res.data.message,
             group: "auth",
           });
-          exitResetPasswordMode();
+          this.exitResetPasswordMode();
         })
         .catch((error) => {
           $notify({
@@ -330,12 +328,11 @@ export default {
     },
     submitNewPassword() {
       let data = {
-        resetToken: newPasswordToken,
-        password: password,
-        email: email,
+        resetToken: this.newPasswordToken,
+        password: this.password,
+        email: this.email,
       };
-      $axios
-        .post("/users/new_password", data)
+      $fetch("/users/new_password", data)
         .then((res) => {
           $notify({
             type: "success",
@@ -343,7 +340,7 @@ export default {
             group: "auth",
           });
           this.newPasswordMode = false;
-          submitLogin();
+          this.submitLogin();
         })
         .catch((error) => {
           $notify({
@@ -354,14 +351,13 @@ export default {
         });
     },
     resetPasswordDetails(token) {
-      $axios
-        .get("/users/reset_password/" + token, {})
+      $fetch("/users/reset_password/" + token, {})
         .then((res) => {
           this.newPasswordToken = token;
           this.newPasswordMode = true;
-          clearForm();
+          this.clearForm();
           this.email = res.data?.data.user.email;
-          $router.push("login");
+          this.$router.push("login");
         })
         .catch((error) => {
           $notify({
@@ -378,7 +374,7 @@ export default {
       this.providerInvite = true;
     }
     if (this.$route.query.resetPassword) {
-      resetPasswordDetails(this.$route.query.resetPassword);
+      this.resetPasswordDetails(this.$route.query.resetPassword);
     }
   },
 };
