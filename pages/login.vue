@@ -251,25 +251,25 @@ export default {
   },
   methods: {
     exitResetPasswordMode() {
-      resetPasswordMode = false;
-      tab = 0;
+      this.resetPasswordMode = false;
+      this.tab = 0;
       clearForm();
     },
     setResetPasswordMode() {
-      resetPasswordMode = true;
-      tab = 0;
+      this.resetPasswordMode = true;
+      this.tab = 0;
       clearForm();
     },
     clearForm() {
       v$.$reset();
-      email = null;
-      password = null;
-      passwordConfirmation = null;
+      this.email = null;
+      this.password = null;
+      this.passwordConfirmation = null;
     },
     async submitLogin() {
-      if (isValidForm) {
+      if (this.isValidForm) {
         try {
-          await $auth.loginWith("local", {
+          await this.$auth.loginWith("local", {
             data: { email: email, password: password },
           });
         } catch (error) {
@@ -283,7 +283,7 @@ export default {
       }
     },
     async submitRegister() {
-      if (isValidForm) {
+      if (this.isValidForm) {
         $axios
           .post("/users/register", {
             email: email,
