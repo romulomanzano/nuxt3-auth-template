@@ -342,7 +342,7 @@ export default {
             text: res.data.message,
             group: "auth",
           });
-          newPasswordMode = false;
+          this.newPasswordMode = false;
           submitLogin();
         })
         .catch((error) => {
@@ -357,10 +357,10 @@ export default {
       $axios
         .get("/users/reset_password/" + token, {})
         .then((res) => {
-          newPasswordToken = token;
-          newPasswordMode = true;
+          this.newPasswordToken = token;
+          this.newPasswordMode = true;
           clearForm();
-          email = res.data?.data.user.email;
+          this.email = res.data?.data.user.email;
           $router.push("login");
         })
         .catch((error) => {
@@ -375,7 +375,7 @@ export default {
   },
   mounted() {
     if (this.$route.query.providerInvite === "true") {
-      providerInvite = true;
+      this.providerInvite = true;
     }
     if (this.$route.query.resetPassword) {
       resetPasswordDetails(this.$route.query.resetPassword);
