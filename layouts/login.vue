@@ -1,13 +1,11 @@
 <template>
   <div>
     <v-app>
-      <v-container class="pa-0 layout-container" fluid>
-        <v-layout>
-          <v-container>
-            <Nuxt />
-          </v-container>
-        </v-layout>
-      </v-container>
+      <v-main>
+        <v-container class="pa-0 layout-container" fluid>
+          <Nuxt />
+        </v-container>
+      </v-main>
     </v-app>
   </div>
 </template>
