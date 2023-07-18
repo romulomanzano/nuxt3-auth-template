@@ -244,14 +244,11 @@ const clearForm = function () {
 const submitLogin = function () {
   if (isValidForm) {
     $auth
-      .signIn(
-        "local",
-        {
-          email: state.email,
-          password: state.password,
-          callbackUrl: "/"
-        },
-      )
+      .signIn("local", {
+        email: state.email,
+        password: state.password,
+        callbackUrl: "/",
+      })
       .catch(function (error) {
         console.log(error);
         let response = JSON.parse(error.response._data);

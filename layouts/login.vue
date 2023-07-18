@@ -22,4 +22,3 @@ onMounted(function () {
   }
 });
 </script>
- 
