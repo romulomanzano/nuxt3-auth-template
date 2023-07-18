@@ -181,6 +181,10 @@
 <script setup>
 definePageMeta({
   layout: "login",
+  auth: {
+    unauthenticatedOnly: true,
+    navigateAuthenticatedTo: "/",
+  },
 });
 
 import { email, required, minLength, sameAs } from "@vuelidate/validators";
@@ -217,6 +221,7 @@ const $router = useRouter();
 const $route = useRoute();
 const notification = useNotification();
 const $auth = useAuth();
+const $config = useRuntimeConfig();
 
 const exitResetPasswordMode = function () {
   state.resetPasswordMode = false;
@@ -239,11 +244,16 @@ const clearForm = function () {
 const submitLogin = function () {
   if (isValidForm) {
     $auth
-      .signIn("credentials", {
-        email: state.email,
-        password: state.password,
-      })
+      .signIn(
+        "local",
+        {
+          email: state.email,
+          password: state.password,
+          callbackUrl: "/"
+        },
+      )
       .catch(function (error) {
+        console.log(error);
         let response = JSON.parse(error.response._data);
         notification.notify({
           type: "error",
@@ -257,7 +267,7 @@ const submitLogin = function () {
 
 const submitRegister = async function () {
   if (isValidForm) {
-    apiFetch("/users/register", {
+    $fetch($config.public.apiBaseUrl + "/users/register", {
       method: "POST",
       body: {
         email: state.email,
@@ -273,7 +283,6 @@ const submitRegister = async function () {
         submitLogin();
       })
       .catch((error) => {
-        console.log(error);
         notification.notify({
           type: "error",
           text: error.response.message,

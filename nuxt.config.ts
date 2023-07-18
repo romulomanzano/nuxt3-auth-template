@@ -4,13 +4,20 @@ export default defineNuxtConfig({
   ssr: false,
   modules: ["@sidebase/nuxt-auth"],
   auth: {
+    globalAppMiddleware: true,
     provider: {
       type: "local",
       endpoints: {
         signIn: { path: "/auth/login", method: "post" },
         signOut: { path: "/auth/logout", method: "post" },
         signUp: { path: "/auth/register", method: "post" },
-        getSession: { path: "/auth/session", method: "get" },
+        getSession: { path: "/auth/user", method: "get" },
+      },
+      sessionDataType: {
+        id: "string",
+        email: "string",
+        scope: "string",
+        providerRole: "string",
       },
     },
     baseURL:

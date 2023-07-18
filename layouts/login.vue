@@ -3,19 +3,23 @@
     <v-app>
       <v-main>
         <v-container class="pa-0 layout-container" fluid>
-          <Nuxt />
+          <slot />
         </v-container>
       </v-main>
     </v-app>
   </div>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      title: "App",
-    };
-  },
-};
+<script setup>
+//composables
+const $auth = useAuth();
+const $router = useRouter();
+//functions
+onMounted(function () {
+  const status = $auth.status.value;
+  if (status === "authenticated") {
+    $router.replace({ path: "/" });
+  }
+});
 </script>
+ 
