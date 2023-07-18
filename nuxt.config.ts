@@ -1,6 +1,25 @@
 // nuxt.config.ts
 // https://v3.nuxtjs.org/api/configuration/nuxt.config
 export default defineNuxtConfig({
+  ssr: false,
+  modules: ["@sidebase/nuxt-auth"],
+  auth: {
+    provider: {
+      type: "local",
+      endpoints: {
+        signIn: { path: "/auth/login", method: "post" },
+        signOut: { path: "/auth/logout", method: "post" },
+        signUp: { path: "/auth/register", method: "post" },
+        getSession: { path: "/auth/session", method: "get" },
+      },
+    },
+    baseURL:
+      process.env.NODE_ENV !== "development"
+        ? process.env.NODE_ENV === "production"
+          ? "https://api.app.ooo/api/v1"
+          : "https://app-staging.herokuapp.com/api/v1"
+        : "http://localhost:8080/api/v1",
+  },
   runtimeConfig: {
     public: {
       apiBaseUrl:

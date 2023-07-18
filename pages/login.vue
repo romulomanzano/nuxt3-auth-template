@@ -185,6 +185,7 @@ definePageMeta({
 
 import { email, required, minLength, sameAs } from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
+import { useNotification } from "@kyvg/vue3-notification";
 
 const state = reactive({
   tab: 0,
@@ -214,6 +215,8 @@ const validations = {
 const v$ = useVuelidate(validations, state);
 const $router = useRouter();
 const $route = useRoute();
+const notification = useNotification();
+const $auth = useAuth();
 
 const exitResetPasswordMode = function () {
   state.resetPasswordMode = false;
@@ -233,26 +236,28 @@ const clearForm = function () {
   state.passwordConfirmation = null;
 };
 
-const submitLogin = async function () {
+const submitLogin = function () {
   if (isValidForm) {
-    try {
-      await $auth.loginWith("local", {
-        data: { email: state.email, password: state.password },
+    $auth
+      .signIn("credentials", {
+        email: state.email,
+        password: state.password,
+      })
+      .catch(function (error) {
+        let response = JSON.parse(error.response._data);
+        notification.notify({
+          type: "error",
+          text: response.message,
+          group: "auth",
+        });
       });
-    } catch (error) {
-      $notify({
-        type: "error",
-        text: error.response.data.message,
-        group: "auth",
-      });
-      clearForm();
-    }
+    clearForm();
   }
 };
 
 const submitRegister = async function () {
   if (isValidForm) {
-    $fetch($config.public.apiBaseUrl + "/users/register", {
+    apiFetch("/users/register", {
       method: "POST",
       body: {
         email: state.email,
@@ -260,7 +265,7 @@ const submitRegister = async function () {
       },
     })
       .then((res) => {
-        $notify({
+        notification.notify({
           type: "success",
           text: res.message,
           group: "auth",
@@ -269,7 +274,7 @@ const submitRegister = async function () {
       })
       .catch((error) => {
         console.log(error);
-        $notify({
+        notification.notify({
           type: "error",
           text: error.response.message,
           group: "auth",
@@ -280,12 +285,12 @@ const submitRegister = async function () {
 };
 
 const submitResetPassword = function () {
-  $fetch($config.public.apiBaseUrl + "/users/forgot_password", {
+  apiFetch("/users/forgot_password", {
     method: "POST",
     body: { email: state.email },
   })
     .then((res) => {
-      $notify({
+      notification.notify({
         type: "success",
         text: res.message,
         group: "auth",
@@ -293,9 +298,9 @@ const submitResetPassword = function () {
       exitResetPasswordMode();
     })
     .catch((error) => {
-      $notify({
+      notification.notify({
         type: "error",
-        text: error.response.data.message,
+        text: error.response.message,
         group: "auth",
       });
     });
@@ -307,12 +312,12 @@ const submitNewPassword = function () {
     password: state.password,
     email: state.email,
   };
-  $fetch($config.public.apiBaseUrl + "/users/new_password", {
+  apiFetch("/users/new_password", {
     method: "POST",
     body: data,
   })
     .then((res) => {
-      $notify({
+      notification.notify({
         type: "success",
         text: res.message,
         group: "auth",
@@ -321,7 +326,7 @@ const submitNewPassword = function () {
       submitLogin();
     })
     .catch((error) => {
-      $notify({
+      notification.notify({
         type: "error",
         text: error.response.message,
         group: "auth",
@@ -329,7 +334,7 @@ const submitNewPassword = function () {
     });
 };
 const resetPasswordDetails = function (token) {
-  $fetch($config.public.apiBaseUrl + "/users/reset_password/" + token, {
+  apiFetch("/users/reset_password/" + token, {
     method: "GET",
   })
     .then((res) => {
@@ -340,7 +345,7 @@ const resetPasswordDetails = function (token) {
       $router.push("login");
     })
     .catch((error) => {
-      $notify({
+      notification.notify({
         type: "error",
         text: error.response.message,
         group: "auth",
