@@ -19,6 +19,9 @@ export default defineNuxtConfig({
         scope: "string",
         providerRole: "string",
       },
+      token: {
+        maxAgeInSeconds: 604800,
+      },
     },
     baseURL:
       process.env.NODE_ENV !== "development"

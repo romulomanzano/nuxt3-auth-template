@@ -48,7 +48,7 @@
       </v-main>
 
       <v-footer :absolute="!state.fixed" app dark color="primary">
-        <footer></footer>
+        <Footer></Footer>
       </v-footer>
     </v-app>
   </div>
@@ -56,7 +56,6 @@
 <script setup>
 //composables
 const $auth = useAuth();
-const $router = useRouter();
 //data
 const state = reactive({
   clipped: true,
